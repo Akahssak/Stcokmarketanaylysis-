@@ -1,0 +1,8 @@
+pyspark
+findspark
+yfinance
+matplotlib
+seaborn
+plotly
+pandas
+numpy
