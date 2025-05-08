@@ -1,5 +1,8 @@
-import streamlit as st
 import os
+# Set JAVA_HOME programmatically before importing pyspark
+os.environ["JAVA_HOME"] = r"C:\\Program Files\\Java\\jdk-11.0.12"  # Update this path to your actual JDK path
+
+import streamlit as st
 from PIL import Image
 import pandas as pd
 from analysis import analyze_data
@@ -90,15 +93,15 @@ available_tickers = get_available_tickers()
 selected_ticker = st.sidebar.selectbox("Select Stock Ticker", available_tickers, index=available_tickers.index("INFY.NS") if "INFY.NS" in available_tickers else 0)
 
 # Load and analyze data
-master_df, spark = load_dataframes_from_csv()
+master_df = load_dataframes_from_csv()
 if master_df is not None:
-    processed_df, metrics_df = process_data(master_df, spark)
-    summary_df, top_gainers_df, top_losers_df, daily_pct_change_df, buy_sell_signals_df = analyze_data(processed_df, spark)
+    processed_df, metrics_df = process_data(master_df)
+    summary_df, top_gainers_df, top_losers_df, daily_pct_change_df, buy_sell_signals_df = analyze_data(processed_df)
 
-    # Convert PySpark DataFrames to pandas for display
-    top_gainers_pdf = top_gainers_df.toPandas()
-    top_losers_pdf = top_losers_df.toPandas()
-    buy_sell_signals_pdf = buy_sell_signals_df.toPandas()
+    # DataFrames are already pandas DataFrames for display
+    top_gainers_pdf = top_gainers_df
+    top_losers_pdf = top_losers_df
+    buy_sell_signals_pdf = buy_sell_signals_df
 else:
     top_gainers_pdf = pd.DataFrame()
     top_losers_pdf = pd.DataFrame()
