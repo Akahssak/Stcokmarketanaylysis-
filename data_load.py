@@ -3,6 +3,9 @@ import shutil
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit
 
+import traceback
+import sys
+
 def load_dataframes(data_dir="data", existing_df=None, cache_path="data/cached_master_df.parquet", sampling_fraction=0.5, source="parquet", tickers=None):
     """
     Load stock data into PySpark DataFrame from specified source ('parquet' or 'csv').
@@ -18,13 +21,19 @@ def load_dataframes(data_dir="data", existing_df=None, cache_path="data/cached_m
     Returns:
     - master_df: PySpark DataFrame containing all data with unified schema.
     """
-    spark = SparkSession.builder \
-        .appName("StockDataLoad") \
-        .master("local[*]") \
-        .config("spark.executor.memory", "4g") \
-        .config("spark.driver.memory", "4g") \
-        .config("spark.hadoop.io.native.lib.available", "false") \
-        .getOrCreate()
+    try:
+        spark = SparkSession.builder \
+            .appName("StockDataLoad") \
+            .master("local[*]") \
+            .config("spark.executor.memory", "4g") \
+            .config("spark.driver.memory", "4g") \
+            .config("spark.hadoop.io.native.lib.available", "false") \
+            .getOrCreate()
+    except Exception as e:
+        print("Error creating SparkSession:")
+        print(str(e))
+        traceback.print_exc(file=sys.stdout)
+        return None, None
 
     if existing_df is not None:
         print("Existing DataFrame provided, skipping data loading.")
