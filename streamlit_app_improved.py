@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
 # Import project-specific modules for data loading and analysis
-from data_load import load_dataframes
+from data_load import load_dataframes, load_dataframes_spark
 from data_processing import process_data
 from analysis import analyze_data
 
@@ -93,13 +93,13 @@ st.markdown(
 
 @st.cache_data(show_spinner=True)
 def load_and_process_data(selected_tickers):
-    master_df, spark = load_dataframes(data_dir="data", tickers=selected_tickers)
+    master_df, spark = load_dataframes_spark(data_dir="data", tickers=selected_tickers)
     if master_df is None:
         return None, None, None, None, None
     processed_df, metrics_df = process_data(master_df, spark)
     summary_df, top_gainers_df, top_losers_df, daily_pct_change_df, buy_sell_signals_df = analyze_data(processed_df, spark)
 
-    # Convert Spark DataFrames to Pandas DataFrames for caching compatibility
+    # Convert DataFrames to Pandas DataFrames for caching compatibility
     processed_pdf = processed_df.toPandas() if processed_df is not None else None
     buy_sell_signals_pdf = buy_sell_signals_df.toPandas() if buy_sell_signals_df is not None else None
     top_gainers_pdf = top_gainers_df.toPandas() if top_gainers_df is not None else None
