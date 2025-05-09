@@ -1,0 +1,7 @@
+[server]
+headless = true
+enableCORS = false
+port = 8501
+
+[run]
+command = "bash .streamlit/setup.sh && streamlit run streamlit_app_improved.py"
